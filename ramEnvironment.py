@@ -1,6 +1,8 @@
 import simpy
 import random
 
+RANDOM_SEED = 0
+random.seed(RANDOM_SEED)
 CPU_INST = 3
 AVAILABLE_CPU = 1
 PROCESOS = 25
@@ -8,7 +10,6 @@ TIEMPO = 10
 UNIDAD = 1
 RAM_CAPACITY = 100
 INTERVALO = 10
-
 
 def procesos(env, nombre, ramCapacidad, ramNeeded, inst_req, tiempo, velocidad):
 
@@ -58,9 +59,13 @@ def procesos(env, nombre, ramCapacidad, ramNeeded, inst_req, tiempo, velocidad):
     print("%s ha liberado %d de RAM" % (nombre, ramNeeded))
     print("Tiempo ejecutado: %a" % (tiempo))
 
+    global tiempo_total
+    tiempo_total += (env.now - tiempoInicial)
+
 env = simpy.Environment()
 memoria_ram = simpy.Container(env, capacity=RAM_CAPACITY, init=RAM_CAPACITY)
 cpu = simpy.Resource(env, capacity=AVAILABLE_CPU)
+tiempo_total = 0
 
 for i in range(PROCESOS):
     ram_neeeded = random.randint(1, 10)
@@ -71,4 +76,6 @@ for i in range(PROCESOS):
 
 env.run()
 
+#Promedio Tiempo
+print("Tiempo promedio es de: " + str((tiempo_total/PROCESOS)) + " segundos")
 
